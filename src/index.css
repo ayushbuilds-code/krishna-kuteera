@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+@theme {
+  --color-kumkum: #8B2323;
+  --color-kumkum-dark: #681717;
+  --color-kumkum-soft: #FBF0EE;
+
+  --color-banana: #1E6F3D;
+  --color-banana-dark: #14522C;
+  --color-banana-soft: #ECF6EF;
+
+  --color-turmeric: #E5A91A;
+  --color-turmeric-dark: #C28606;
+  --color-turmeric-soft: #FEF8E6;
+
+  --color-wood: #3A251B;
+  --color-cream: #FAF7F2;
+  --color-cream-warm: #F2ECE1;
+  --color-sand-border: #E7DEC9;
+  --color-ink: #1D1512;
+  --color-ink-muted: #6C5D54;
+
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-kannada: "Noto Sans Kannada", sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-cream);
+    color: var(--color-ink);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-serif);
+    letter-spacing: -0.015em;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .card-surface {
+    background-color: #ffffff;
+    border: 1px solid rgba(29, 21, 18, 0.08);
+    box-shadow: 0 2px 12px rgba(29, 21, 18, 0.04);
+  }
+
+  .card-surface-hover {
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 240ms ease;
+  }
+
+  .card-surface-hover:hover {
+    transform: translateY(-2px);
+    border-color: rgba(139, 35, 35, 0.22);
+    box-shadow: 0 18px 40px -12px rgba(29, 21, 18, 0.12);
+  }
+}
