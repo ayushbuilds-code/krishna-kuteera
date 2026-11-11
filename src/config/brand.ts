@@ -195,7 +195,7 @@ export const BRAND: BrandConfig = {
   },
 
   legal: {
-    legalEntityName: 'Krishna Kuteera Hospitality Pvt. Ltd.', // TODO: Confirm registered business name
+    legalEntityName: 'Krishna Kuteera Pvt. Ltd.',
     gstin: '29AABCK0000A1Z5', // TODO: Replace with actual GSTIN per outlet / entity
     fssaiNumber: '11223331000000', // TODO: Replace with actual FSSAI license number
   },

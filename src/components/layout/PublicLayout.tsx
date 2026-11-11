@@ -307,7 +307,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
         </div>
 
         <div className="border-t border-white/10 py-5 px-4 sm:px-6 text-xs text-cream/50 text-center">
-          © {new Date().getFullYear()} {BRAND.legal.legalEntityName}. All rights reserved. • FSSAI: {BRAND.legal.fssaiNumber}
+          © {new Date().getFullYear()} {BRAND.legal.legalEntityName} All rights reserved.
         </div>
       </footer>
 
