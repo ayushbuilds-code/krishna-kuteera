@@ -456,7 +456,7 @@ export function MenuPage() {
 
       {/* Floating Cart Summary Bar */}
       {totalItems > 0 && (
-        <div className="fixed bottom-16 md:bottom-6 inset-x-4 z-30 flex justify-center pointer-events-none">
+        <div className="fixed bottom-[70px] md:bottom-6 inset-x-3 sm:inset-x-4 z-30 flex justify-center pointer-events-none">
           <div className="pointer-events-auto w-full max-w-xl rounded-full bg-ink/95 backdrop-blur-md text-white pl-6 pr-3 py-2.5 shadow-2xl border border-white/15 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <span className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-turmeric text-ink text-xs font-bold tabular-nums">

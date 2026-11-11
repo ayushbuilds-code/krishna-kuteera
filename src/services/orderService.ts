@@ -30,10 +30,33 @@ export function broadcastOrderSync(event: OrderSyncEvent): void {
   }
 }
 
+let backendApiPromise: Promise<boolean> | null = null;
+
+export async function hasBackendApi(): Promise<boolean> {
+  if (typeof window === 'undefined' || typeof fetch === 'undefined') {
+    return false;
+  }
+  if (!backendApiPromise) {
+    backendApiPromise = fetch('/api/health')
+      .then(async (res) => {
+        if (!res.ok) return false;
+        const ct = res.headers.get('content-type') || '';
+        if (!ct.includes('application/json')) return false;
+        const data = (await res.json()) as { ok?: boolean };
+        return Boolean(data?.ok);
+      })
+      .catch(() => false);
+  }
+  return backendApiPromise;
+}
+
 export function subscribeToDemoOrderSync(
   onSync: (event: OrderSyncEvent) => void
 ): () => void {
+  let disposed = false;
   let ch: BroadcastChannel | null = null;
+  let es: EventSource | null = null;
+
   try {
     if (typeof BroadcastChannel !== 'undefined') {
       ch = new BroadcastChannel(ORDER_SYNC_CHANNEL);
@@ -46,6 +69,26 @@ export function subscribeToDemoOrderSync(
   } catch {
     ch = null;
   }
+
+  // Subscribe to Server-Sent Events when served by Node server.mjs (cross-device sync)
+  void hasBackendApi().then((available) => {
+    if (disposed || !available || typeof EventSource === 'undefined') return;
+    try {
+      es = new EventSource('/api/events');
+      es.onmessage = (msg) => {
+        try {
+          const parsed = JSON.parse(msg.data) as OrderSyncEvent;
+          if (parsed && typeof parsed.type === 'string') {
+            onSync(parsed);
+          }
+        } catch {
+          // ignore heartbeats / non-JSON
+        }
+      };
+    } catch {
+      es = null;
+    }
+  });
 
   const handleStorage = (e: StorageEvent) => {
     if (e.key === DEMO_ORDERS_KEY) {
@@ -60,7 +103,9 @@ export function subscribeToDemoOrderSync(
   }
 
   return () => {
+    disposed = true;
     if (ch) ch.close();
+    if (es) es.close();
     if (typeof window !== 'undefined') {
       window.removeEventListener('storage', handleStorage);
     }
@@ -216,11 +261,13 @@ function getDemoOrders(): DemoOrderRecord[] {
   }
 }
 
-function saveDemoOrder(record: DemoOrderRecord) {
+function saveDemoOrder(record: DemoOrderRecord, notifyNewOrder = false) {
   try {
     const existing = getDemoOrders().filter((r) => r.order.id !== record.order.id);
     localStorage.setItem(DEMO_ORDERS_KEY, JSON.stringify([record, ...existing].slice(0, 20)));
-    broadcastOrderSync({ type: 'NEW_ORDER', orderId: record.order.id });
+    if (notifyNewOrder) {
+      broadcastOrderSync({ type: 'NEW_ORDER', orderId: record.order.id });
+    }
   } catch {
     // ignore storage errors
   }
@@ -362,7 +409,20 @@ export async function placeOrder(input: PlaceOrderInput): Promise<{
     }
 
     const record = { order, items, outletName: input.outletName };
-    saveDemoOrder(record);
+    saveDemoOrder(record, true);
+
+    if (await hasBackendApi()) {
+      try {
+        await fetch('/api/orders', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(record),
+        });
+      } catch {
+        // local fallback already saved
+      }
+    }
+
     return record;
   }
 
@@ -482,6 +542,22 @@ export async function lookupOrderForTracking(
   );
 
   if (!isSupabaseConfigured) {
+    if (await hasBackendApi()) {
+      try {
+        const res = await fetch(
+          `/api/orders/lookup?orderNumber=${encodeURIComponent(orderNumber)}&phone=${encodeURIComponent(phone)}`
+        );
+        if (res.ok) {
+          const data = (await res.json()) as { record?: DemoOrderRecord | null };
+          if (data.record) {
+            saveDemoOrder(data.record);
+            return data.record;
+          }
+        }
+      } catch {
+        // fallback to local
+      }
+    }
     return localMatch ?? null;
   }
 
@@ -506,7 +582,21 @@ export async function fetchOrderByIdForTracking(
   orderId: string
 ): Promise<DemoOrderRecord | null> {
   const localMatch = getDemoOrders().find((r) => r.order.id === orderId);
-  if (!isSupabaseConfigured || orderId.startsWith('demo-ord-')) {
+  if (!isSupabaseConfigured || orderId.startsWith('demo-ord-') || orderId.startsWith('seed-ord-')) {
+    if (await hasBackendApi()) {
+      try {
+        const res = await fetch(`/api/orders/${encodeURIComponent(orderId)}`);
+        if (res.ok) {
+          const data = (await res.json()) as { record?: DemoOrderRecord | null };
+          if (data.record) {
+            saveDemoOrder(data.record);
+            return data.record;
+          }
+        }
+      } catch {
+        // fallback to local
+      }
+    }
     return localMatch ?? null;
   }
 

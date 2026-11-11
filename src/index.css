@@ -26,6 +26,10 @@
 }
 
 @layer base {
+  html, body {
+    overflow-x: hidden;
+  }
+
   html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
@@ -37,6 +41,15 @@
     background-color: var(--color-cream);
     color: var(--color-ink);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Prevent iOS Safari auto-zoom when tapping form controls on mobile */
+  @media (max-width: 640px) {
+    input,
+    select,
+    textarea {
+      font-size: 16px;
+    }
   }
 
   h1, h2, h3, h4, .font-display {

@@ -60,6 +60,7 @@ export function AdminOrdersPage() {
   const [orders, setOrders] = useState<AdminOrderWithItems[]>([]);
   const [loading, setLoading] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [mobileStage, setMobileStage] = useState<'all' | OrderStatus>('all');
   const [printTarget, setPrintTarget] = useState<{
     entry: AdminOrderWithItems;
     mode: 'kot' | 'bill';
@@ -201,6 +202,42 @@ export function AdminOrdersPage() {
         </div>
       </div>
 
+      {/* Mobile Stage Quick Filter Tabs */}
+      <div className="md:hidden flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+        <button
+          type="button"
+          onClick={() => setMobileStage('all')}
+          className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
+            mobileStage === 'all'
+              ? 'bg-ink text-white'
+              : 'bg-white border border-sand-border text-ink-muted'
+          }`}
+        >
+          All ({orders.length})
+        </button>
+        {KANBAN_COLUMNS.map((col) => {
+          const count = orders.filter((e) =>
+            col.key === 'ready'
+              ? e.order.status === 'ready' || e.order.status === 'out_for_delivery'
+              : e.order.status === col.key
+          ).length;
+          return (
+            <button
+              key={col.key}
+              type="button"
+              onClick={() => setMobileStage(col.key)}
+              className={`shrink-0 rounded-full px-3.5 py-2 text-xs font-bold transition-colors cursor-pointer ${
+                mobileStage === col.key
+                  ? 'bg-kumkum text-white'
+                  : 'bg-white border border-sand-border text-ink-muted'
+              }`}
+            >
+              {col.title} ({count})
+            </button>
+          );
+        })}
+      </div>
+
       {/* Kanban Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 items-start">
         {KANBAN_COLUMNS.map((col) => {
@@ -209,11 +246,15 @@ export function AdminOrdersPage() {
               ? e.order.status === 'ready' || e.order.status === 'out_for_delivery'
               : e.order.status === col.key
           );
+          const hiddenOnMobile =
+            mobileStage !== 'all' && mobileStage !== col.key;
 
           return (
             <section
               key={col.key}
-              className="rounded-2xl bg-cream-warm border border-sand-border p-3 space-y-3 min-h-[280px]"
+              className={`rounded-2xl bg-cream-warm border border-sand-border p-3 space-y-3 min-h-[240px] md:min-h-[280px] ${
+                hiddenOnMobile ? 'hidden md:block' : ''
+              }`}
             >
               <header className="flex items-center justify-between px-1">
                 <h2 className="font-serif text-base font-bold text-ink">

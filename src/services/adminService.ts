@@ -9,6 +9,7 @@ import {
 import {
   advanceDemoOrderStatus,
   getRecentLocalOrders,
+  hasBackendApi,
 } from '@/services/orderService';
 import type {
   InventoryItem,
@@ -256,6 +257,24 @@ export async function fetchAdminOrders(
     }
   }
 
+  if (await hasBackendApi()) {
+    try {
+      const res = await fetch(
+        `/api/orders?outletId=${encodeURIComponent(outletId)}`
+      );
+      if (res.ok) {
+        const data = (await res.json()) as {
+          orders?: AdminOrderWithItems[];
+        };
+        if (Array.isArray(data.orders)) {
+          return data.orders;
+        }
+      }
+    } catch {
+      // fall through to local demo store
+    }
+  }
+
   let stored: AdminOrderWithItems[] = [];
   try {
     const raw = localStorage.getItem(DEMO_ADMIN_ORDERS_KEY);
@@ -305,6 +324,18 @@ export async function updateAdminOrderStatus(
       .eq('id', orderId);
     if (error) throw new Error(error.message);
     return;
+  }
+
+  if (await hasBackendApi()) {
+    try {
+      await fetch(`/api/orders/${encodeURIComponent(orderId)}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      });
+    } catch {
+      // also update local fallback below
+    }
   }
 
   const now = new Date().toISOString();

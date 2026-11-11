@@ -77,11 +77,11 @@ export function BrandLogo({
         </svg>
       )}
 
-      <div className="flex flex-col leading-none">
-        <div className="flex items-baseline gap-2">
+      <div className="flex flex-col leading-none min-w-0">
+        <div className="flex items-baseline gap-1.5 sm:gap-2">
           {showKannada && (
             <span
-              className={`text-xs sm:text-sm font-bold tracking-wide ${
+              className={`text-xs sm:text-sm font-bold tracking-wide shrink-0 ${
                 variant === 'light' ? 'text-turmeric' : 'text-banana'
               }`}
               style={{ fontFamily: BRAND.fonts.kannada }}
@@ -90,12 +90,12 @@ export function BrandLogo({
             </span>
           )}
           <span
-            className={`font-serif font-bold tracking-tight ${titleClass} ${textColor}`}
+            className={`font-serif font-bold tracking-tight whitespace-nowrap truncate ${titleClass} ${textColor}`}
           >
             {BRAND.name}
           </span>
         </div>
-        <span className={`text-[11px] font-medium tracking-wide mt-0.5 ${subColor}`}>
+        <span className={`hidden sm:block text-[11px] font-medium tracking-wide mt-0.5 truncate ${subColor}`}>
           {BRAND.pureVegLabel} • Bengaluru
         </span>
       </div>

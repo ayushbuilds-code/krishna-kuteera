@@ -269,30 +269,30 @@ export function HomePage() {
           {/* Right Editorial Photography */}
           <div className="lg:col-span-6">
             <div className="relative">
-              <div className="relative rounded-[2rem] overflow-hidden shadow-[0_24px_60px_-15px_rgba(29,21,18,0.22)] bg-cream-warm aspect-[4/3] lg:aspect-[5/4]">
+              <div className="relative rounded-3xl sm:rounded-[2rem] overflow-hidden shadow-[0_24px_60px_-15px_rgba(29,21,18,0.22)] bg-cream-warm aspect-[16/11] sm:aspect-[4/3] lg:aspect-[5/4]">
                 {/* TODO: Replace with authentic hero photo of Krishna Kuteera Benne Masala Dosa & Filter Coffee */}
                 <img
                   src={BRAND.placeholders.heroImage}
                   alt="Crispy South Indian Masala Dosa with coconut chutney and sambar at Krishna Kuteera"
                   className="w-full h-full object-cover"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
 
                 {/* Floating Rating Pill */}
-                <div className="absolute top-4 left-4 rounded-full bg-white/95 backdrop-blur-md px-3.5 py-1.5 shadow-sm flex items-center gap-2 text-xs font-semibold text-ink">
+                <div className="absolute top-3 left-3 sm:top-4 sm:left-4 rounded-full bg-white/95 backdrop-blur-md px-3 py-1 sm:px-3.5 sm:py-1.5 shadow-sm flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-semibold text-ink">
                   <Star className="w-3.5 h-3.5 fill-turmeric text-turmeric" />
                   <span>4.8 Rated</span>
-                  <span className="text-ink-muted">• Fresh from 7:30 AM</span>
+                  <span className="hidden xs:inline text-ink-muted">• Fresh from 7:30 AM</span>
                 </div>
 
                 {/* Bottom Frosted Featured Card */}
-                <div className="absolute bottom-4 left-4 right-4 rounded-2xl bg-white/94 backdrop-blur-md text-ink p-4 shadow-lg flex items-center justify-between gap-4 border border-white/60">
-                  <div>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-kumkum">
+                <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 rounded-2xl bg-white/94 backdrop-blur-md text-ink p-3 sm:p-4 shadow-lg flex items-center justify-between gap-3 sm:gap-4 border border-white/60">
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.12em] text-kumkum">
                       Morning Signature
                     </p>
-                    <p className="font-serif text-base sm:text-lg font-bold text-ink">
-                      Benne Masala Dosa &amp; Brass Filter Coffee
+                    <p className="font-serif text-sm sm:text-lg font-bold text-ink truncate">
+                      Benne Masala Dosa &amp; Filter Coffee
                     </p>
                   </div>
                   <Link
@@ -552,7 +552,7 @@ export function HomePage() {
           {/* TODO: Replace MOCK_GALLERY_PHOTOS with authentic restaurant & kitchen shots */}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[220px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-[190px] sm:auto-rows-[220px]">
           {MOCK_GALLERY_PHOTOS.map((photo, idx) => (
             <figure
               key={photo.title}

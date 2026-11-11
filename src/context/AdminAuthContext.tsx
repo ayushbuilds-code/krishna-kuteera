@@ -126,9 +126,7 @@ const AdminAuthContext = createContext<AdminAuthContextValue | undefined>(undefi
 export function AdminAuthProvider({ children }: { children: ReactNode }) {
   const [staff, setStaff] = useState<StaffMember | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeOutletId, setActiveOutletIdState] = useState<string>(
-    MOCK_OUTLETS[0].id
-  );
+  const [activeOutletId, setActiveOutletIdState] = useState<string>('all');
 
   useEffect(() => {
     let active = true;
@@ -140,7 +138,11 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
             const parsed = JSON.parse(raw) as StaffMember;
             if (active) {
               setStaff(parsed);
-              setActiveOutletIdState(parsed.outlet_id || MOCK_OUTLETS[0].id);
+              setActiveOutletIdState(
+                parsed.role === 'owner'
+                  ? 'all'
+                  : parsed.outlet_id || MOCK_OUTLETS[0].id
+              );
             }
           }
         } catch {
@@ -222,12 +224,16 @@ export function AdminAuthProvider({ children }: { children: ReactNode }) {
     }
     const member = staffRow as StaffMember;
     setStaff(member);
-    setActiveOutletIdState(member.outlet_id || MOCK_OUTLETS[0].id);
+    setActiveOutletIdState(
+      member.role === 'owner' ? 'all' : member.outlet_id || MOCK_OUTLETS[0].id
+    );
   }, []);
 
   const signInDemoRole = useCallback((profile: StaffMember) => {
     setStaff(profile);
-    setActiveOutletIdState(profile.outlet_id || MOCK_OUTLETS[0].id);
+    setActiveOutletIdState(
+      profile.role === 'owner' ? 'all' : profile.outlet_id || MOCK_OUTLETS[0].id
+    );
     try {
       localStorage.setItem(DEMO_STAFF_STORAGE_KEY, JSON.stringify(profile));
     } catch {

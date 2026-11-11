@@ -52,7 +52,7 @@ export function PublicLayout({ children }: PublicLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-cream text-ink pb-16 md:pb-0">
+    <div className="min-h-screen flex flex-col bg-cream text-ink pb-28 md:pb-0 overflow-x-hidden">
       {/* Slim Editorial Announcement Strip */}
       <div className="bg-ink text-cream/90 text-[11px] sm:text-xs font-medium py-2 px-4 text-center border-b border-white/10">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
@@ -156,6 +156,28 @@ export function PublicLayout({ children }: PublicLayoutProps) {
             </button>
           </div>
         </div>
+
+        {/* Mobile 1-Tap Outlet Strip (visible on < sm screens) */}
+        {outlets.length > 0 && selectedOutlet && (
+          <div className="sm:hidden border-t border-ink/6 bg-cream-warm/80 px-4 py-1.5 flex items-center justify-between gap-2">
+            <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-ink-muted shrink-0">
+              <MapPin className="w-3.5 h-3.5 text-banana" />
+              Outlet:
+            </span>
+            <select
+              aria-label="Mobile outlet selector"
+              value={selectedOutlet.id}
+              onChange={(e) => selectOutletById(e.target.value)}
+              className="flex-1 min-w-0 bg-transparent text-xs font-semibold text-ink focus:outline-none truncate text-right"
+            >
+              {outlets.map((outlet) => (
+                <option key={outlet.id} value={outlet.id}>
+                  {outlet.locality}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {/* Mobile Drawer */}
         {mobileMenuOpen && (
